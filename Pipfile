@@ -10,6 +10,8 @@ pylint = "*"
 Telethon = "*"
 python-dotenv = "*"
 Quart = "*"
+flask-mail = "*"
+contextvars = "*"
 
 [requires]
 python_version = "3.6"

@@ -1,14 +1,14 @@
-import asyncio
-import os
+import os, time, json
 from dotenv import load_dotenv
 from quart import Quart, request, jsonify
 from telegram import sendcode, login, logout, sendmsg
-
+from msgemail import render_template, send_email
+#-----------------------------------------------------------------------------------------
 load_dotenv()
-
-
+#-----------------------------------------------------------------------------------------
 app = Quart(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
+#-----------------------------------------------------------------------------------------
 
 @app.route('/sendrequest' , methods=['POST'])
 async def sendrequest():
@@ -20,6 +20,7 @@ async def sendrequest():
     await sendcode(p)
     return jsonify ({'message': 'code have sent to your telegram success !'}), 200
 
+#-----------------------------------------------------------------------------------------
 
 @app.route('/telegramlogin' , methods=['POST'])
 async def telegramlogin():
@@ -33,6 +34,7 @@ async def telegramlogin():
     await login(p, c)
     return jsonify ({'message': 'login success !'}), 200
 
+#-----------------------------------------------------------------------------------------
 
 @app.route('/telegramlogout' , methods=['POST'])
 async def telegramlogout():
@@ -44,6 +46,7 @@ async def telegramlogout():
     await logout(p)
     return jsonify ({'message': 'logout success !'}), 200
 
+#-----------------------------------------------------------------------------------------
 
 @app.route('/telegrammsg' , methods=['POST'])
 async def telegrammsg():
@@ -59,7 +62,66 @@ async def telegrammsg():
     await sendmsg(p,c,m)
     return jsonify ({'message': 'sent message success !'}), 200
 
+#-----------------------------------------------------------------------------------------
 
+@app.route("/emailmessage" , methods=["POST"])
+async def emailmessage():
+    request_data = await request.get_json(silent=True)
+    sender = request_data["sender"]
+    password =request_data["password"]
+    subject = request_data["subject"]
+    context = request_data["context"]
+
+    port = os.getenv("EMAIL_PORT")
+    if 'port' in request_data:
+        port = request_data['port']
+
+    htmlfile = 'base/default.j2'
+    if 'htmlfile' in request_data:
+        htmlfile = request_data['htmlfile']
+
+    host = os.getenv("EMAIL_HOST")
+    if 'host' in request_data:
+        host = request_data['host']
+
+    receiver = None
+    if 'receiver' in request_data:
+        receiver = request_data['receiver']
+
+    emailfile = 'email-list.json'
+    if 'emailfile' in request_data:
+        emailfile = request_data['emailfile']
+
+    if receiver is None:
+        ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+        with open(ROOT_DIR + '/emailLst/'+emailfile, 'r') as file:
+            data=file.read()
+        obj = json.loads(data)
+
+        for key in obj:
+            name = key['firstname'] +' '+ key['lastname']
+            email = key['email']
+            html = await render_template(htmlfile, context, name)
+            await send_email(receiver=email,
+                        sender=sender,
+                        password=password,
+                        subject=subject,
+                        body=html,
+                        host=host,
+                        port=port)
+            time.sleep(5)
+    else:
+        html = await render_template(htmlfile, context)
+        await send_email(receiver=receiver,
+                        sender=sender,
+                        password=password,
+                        subject=subject,
+                        body=html,
+                        host=host,
+                        port=port)
+    return jsonify ({"message": "sent message success !"}), 200
+
+#-----------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
     app.run(host=os.getenv("HOST"),
