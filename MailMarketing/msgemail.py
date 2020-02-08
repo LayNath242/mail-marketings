@@ -5,9 +5,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.header import Header
 from email.utils import formataddr
-from dotenv import load_dotenv
-
-load_dotenv()
 
 ssl._create_default_https_context = ssl._create_unverified_context
 

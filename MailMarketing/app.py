@@ -3,11 +3,11 @@ from dotenv import load_dotenv
 from quart import Quart, request, jsonify
 from telegram import sendcode, login, logout, sendmsg
 from msgemail import render_template, send_email
-#-----------------------------------------------------------------------------------------
-load_dotenv()
+
 #-----------------------------------------------------------------------------------------
 app = Quart(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
+
 #-----------------------------------------------------------------------------------------
 
 @app.route('/sendrequest' , methods=['POST'])

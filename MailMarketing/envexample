@@ -1,16 +1,10 @@
 DEBUG=True
 PORT=5000
 HOST='127.0.0.1'
-SECRET_KEY ='very secret key'
-
+SECRET_KEY ='any key'
 
 EMAIL_HOST='smtp.gmail.com'
-EMAIL_HOST_USER='your email'
-EMAIL_HOST_PASSWORD='your password'
-EMAIL_PORT= 465
-EMAIL_USE_SSL= True
-DEFAULT_FROM_EMAIL='your email'
+EMAIL_PORT= 587
 
-
-API_ID= 1111111 
+API_ID= xxxxxxx
 API_HASH='xxxxxxxxxxxxxxxxxxxxxx'

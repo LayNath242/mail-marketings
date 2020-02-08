@@ -3,6 +3,7 @@ DS_Store
 .flaskenv
 *.pyc
 *.pyo
+*.session
 dist/
 build/
 *.egg
