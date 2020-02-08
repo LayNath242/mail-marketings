@@ -34,16 +34,18 @@ Create Telegram Api_Hash and Api_Id :
   can currently be changed later.
 - Click on Create application at the end. Remember that your API hash is secret and Telegram
   won’t let you revoke it. Don’t post it anywhere!
+
 > More detail [Telegram] Api
 
 About My Telegram Route:
 
+
 | Function | Method | Route |Variable|
 | ------ | ------ |------ |------ |
-| Send Request Code | POST |[http://127.0.0.1:5000/sendrequest] |phone
-| Sign in | POST |[http://127.0.0.1:5000/telegramlogin] |phone, code
-| Send Message | POST |[http://127.0.0.1:5000/telegrammsg] |phone, channel, msg
-| Log out | POST |[http://127.0.0.1:5000/telegramlogout] |phone
+| Send Request Code | POST |http://127.0.0.1:5000/sendrequest |phone
+| Sign in | POST |http://127.0.0.1:5000/telegramlogin |phone, code
+| Send Message | POST |http://127.0.0.1:5000/telegrammsg |phone, channel, msg
+| Log out | POST |http://127.0.0.1:5000/telegramlogout |phone
 
 
 example:
@@ -83,16 +85,19 @@ Make Your Gmail Enable SMTP Mail
 
 About My Email Route:
 
+
 | Function | Method | Route |Require Variable|
 | ------ | ------ |------ |------ |
-| Send Email | POST |[http://127.0.0.1:5000/emailmessage] |sender, password, subject, context|
+| Send Email | POST |http://127.0.0.1:5000/emailmessage |sender, password, subject, context|
 
 * Note This function have test only with gmail
+
     * Server: smtp.gmail.com
     * Encryption/Authentication: StartTLS
     * Port: 587
 
 example :
+
   -  {
         "sender": "your sender email",
         "password": "your password",
