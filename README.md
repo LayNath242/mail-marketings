@@ -10,6 +10,7 @@ Koompi Mail Marketing is program use to sent email and sent message to telegram.
   - See email to any email in json file
 
 ## To Run This Python Code
+
 Install the dependencies and virtual environment.
 ```sh
  $ pip install pipenv  (use to install python virtual environment)
@@ -18,11 +19,12 @@ Install the dependencies and virtual environment.
 ```
 For start the server
 ```sh
- - $ cd MailMarketing 
+ - $ cd MailMarketing
  - $ export QUART_APP=app:app
  - $ quart run
 ```
-### To Use Sent Mail In Telegram 
+### To Use Sent Mail In Telegram
+
 Create Telegram Api_Hash and Api_Id :
   - [Login] to your Telegram account
    with the phone number of the developer account to use.
@@ -32,15 +34,16 @@ Create Telegram Api_Hash and Api_Id :
   can currently be changed later.
 - Click on Create application at the end. Remember that your API hash is secret and Telegram
   won’t let you revoke it. Don’t post it anywhere!
-> More detail [Telegram] Api  
+> More detail [Telegram] Api
 
 About My Telegram Route:
+
 | Function | Method | Route |Variable|
 | ------ | ------ |------ |------ |
-| Send Request Code | POST |[http://127.0.0.1:5000/sendrequest][PlDb] |phone
-| Sign in | POST |[http://127.0.0.1:5000/telegramlogin][PlGh] |phone, code
-| Send Message | POST |[http://127.0.0.1:5000//telegrammsg][PlGd] |phone, channel, msg
-| Log out | POST |[plugins/onedrive/README.md][PlOd] |phone
+| Send Request Code | POST |[http://127.0.0.1:5000/sendrequest] |phone
+| Sign in | POST |[http://127.0.0.1:5000/telegramlogin] |phone, code
+| Send Message | POST |[http://127.0.0.1:5000/telegrammsg] |phone, channel, msg
+| Log out | POST |[http://127.0.0.1:5000/telegramlogout] |phone
 
 
 example:
@@ -49,12 +52,12 @@ example:
     {
 	"phone": "+xxx xxxxxxx"
     }
-    
+
      > code will send to your telegram account
 - 2. Sign in to Telegram account:
     {
 	"phone": "+xxx xxxxxxx",
-	"code" : code   
+	"code" : code
     }
 -  3. Send Message to Telegram group:
     {
@@ -62,26 +65,29 @@ example:
 	"channel": "https://t.me/joinchat/xxxxxxxxx",
 	"msg": "any message"
     }
+
         > channel is your group channel invite link
-- 4.  Logout from Tegram account:
+- 4.  Logout from Telegram account:
     {
 	"phone": "+855 xxxxxxx"
     }
-    
+
       > Log out when you not use
 
 
-### To Use Sent Email 
+### To Use Sent Email
+
 Make Your Gmail Enable SMTP Mail
 
 - How to do [watch] this
 
-About My Telegram Route:
+About My Email Route:
+
 | Function | Method | Route |Require Variable|
 | ------ | ------ |------ |------ |
-| Send Email | POST |[http://127.0.0.1:5000/emailmessage][PlDb] |sender, password, subject, context|
+| Send Email | POST |[http://127.0.0.1:5000/emailmessage] |sender, password, subject, context|
 
-* Note This fuction have test only with gmail
+* Note This function have test only with gmail
     * Server: smtp.gmail.com
     * Encryption/Authentication: StartTLS
     * Port: 587
@@ -94,7 +100,7 @@ example :
         "context": "message you want to sent"
     }
 
-It can sent all message to all email in file in emailLst floder and you can create html template in templates folder
+It can sent all message to all email in file in emailLst folder and you can create html template in templates folder
 
 
 License

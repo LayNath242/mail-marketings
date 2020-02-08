@@ -2,7 +2,9 @@
     "python.pythonPath": "/home/msi/.local/share/virtualenvs/mail-marketings-4IO7Cq3W/bin/python",
     "cSpell.words": [
         "Kdxx",
-        "Nquizb"
+        "Koompi",
+        "Nquizb",
+        "smtplib"
     ],
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true
