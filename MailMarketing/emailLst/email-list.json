@@ -1,15 +1,9 @@
 [
     {
         "id": 1,
-        "firstname": "who",
-        "lastname": "are",
+        "firstname": "john",
+        "lastname": "wick",
         "email": "todek64349@xrpmail.com"
-    },
-    {
-        "id": 2,
-        "firstname": "lay",
-        "lastname": "nath",
-        "email": "laynath2018@gmail.com"
     }
 
 ]
