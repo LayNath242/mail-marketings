@@ -1,3 +1,5 @@
 telethon
 python-dotenv
-quart
+fastapi
+uvicorn
+jinja2

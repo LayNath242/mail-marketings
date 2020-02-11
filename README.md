@@ -8,21 +8,22 @@ Koompi Mail Marketing is program use to sent email and sent message to telegram.
 
   - Sent message all group member in Telegram
   - See email to any email in json file
+  - This app use python FastApi web framework
 
 ## To Run This Python Code
 
 Install the dependencies and virtual environment.
 ```sh
- $ pip install pipenv  (use to install python virtual environment)
+ $ pip install pipenv  (use to install python virtual environment if you don`t have)
  $ pipenv shell (use to make new virtual environment my project is use python3.6)
- $ pipenv install -r requirements.txt (install module tha we need for this project)
+ $ pipenv install -r requirements.txt (install module that we need for this project)
 ```
 For start the server
 ```sh
  - $ cd MailMarketing
- - $ export QUART_APP=app:app
- - $ quart run
+ - $ python app.py 
 ```
+- you also can run  $ uvicorn app:app --reload
 ### To Use Sent Mail In Telegram
 
 Create Telegram Api_Hash and Api_Id :
@@ -42,40 +43,10 @@ About My Telegram Route:
 
 | Function | Method | Route |Variable|
 | ------ | ------ |------ |------ |
-| Send Request Code | POST |http://127.0.0.1:5000/sendrequest |phone
-| Sign in | POST |http://127.0.0.1:5000/telegramlogin |phone, code
-| Send Message | POST |http://127.0.0.1:5000/telegrammsg |phone, channel, msg
-| Log out | POST |http://127.0.0.1:5000/telegramlogout |phone
-
-
-example:
-
-- 1. Send Request to get code:
-    {
-	"phone": "+xxx xxxxxxx"
-    }
-
-     > code will send to your telegram account
-- 2. Sign in to Telegram account:
-    {
-	"phone": "+xxx xxxxxxx",
-	"code" : code
-    }
--  3. Send Message to Telegram group:
-    {
-	"phone": "+855 xxxxxxx",
-	"channel": "https://t.me/joinchat/xxxxxxxxx",
-	"msg": "any message"
-    }
-
-        > channel is your group channel invite link
-- 4.  Logout from Telegram account:
-    {
-	"phone": "+855 xxxxxxx"
-    }
-
-      > Log out when you not use
-
+| Send Request Code | POST |http://127.0.0.1:8000/sendrequest |phone
+| Sign in | POST |http://127.0.0.1:8000/telegramlogin |phone, code
+| Send Message | POST |http://127.0.0.1:8000/telegrammsg |phone, channel, msg
+| Log out | POST |http://127.0.0.1:8000/telegramlogout |phone
 
 ### To Use Sent Email
 
@@ -88,7 +59,7 @@ About My Email Route:
 
 | Function | Method | Route |Require Variable|
 | ------ | ------ |------ |------ |
-| Send Email | POST |http://127.0.0.1:5000/emailmessage |sender, password, subject, context|
+| Send Email | POST |http://127.0.0.1:8000/emailmessage |sender, password, subject, context|
 
 * Note This function have test only with gmail
 
@@ -96,18 +67,10 @@ About My Email Route:
     * Encryption/Authentication: StartTLS
     * Port: 587
 
-example :
-
-  -  {
-        "sender": "your sender email",
-        "password": "your password",
-        "subject": "your subject ",
-        "context": "message you want to sent"
-    }
-
 It can sent all message to all email in file in emailLst folder and you can create html template in templates folder
 
-
+### Note:
+    - To test please go to http://127.0.0.1:8000/docs
 License
 ----
 

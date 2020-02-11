@@ -3,12 +3,14 @@ import os
 from dotenv import load_dotenv
 import time
 
+#------------------------------------------------------------------------------------------------
 load_dotenv()
 
+#------------------------------------------------------------------------------------------------
 api_id = os.getenv("API_ID")
 api_hash = os.getenv("API_HASH")
 
-
+#------------------------------------------------------------------------------------------------
 async def sendcode(phone_number):
     client = TelegramClient(phone_number, api_id, api_hash)
     phone = await client.connect()
@@ -21,6 +23,7 @@ async def sendcode(phone_number):
     else:
         raise Exception('You already have account')
 
+#------------------------------------------------------------------------------------------------
 async def login(phone_number, code):
     f= open(phone_number,"r")
     phone_code_hash = f.read()
@@ -33,13 +36,13 @@ async def login(phone_number, code):
     except:
         raise Exception('Login False')
 
-
+#------------------------------------------------------------------------------------------------
 async def logout(phone_number):
     client = TelegramClient(phone_number, api_id, api_hash)
     await client.connect()
     await client.log_out()
 
-
+#------------------------------------------------------------------------------------------------
 async def sendmsg(phone, channel, message):
     client = TelegramClient(phone, api_id, api_hash)
     await client.connect()

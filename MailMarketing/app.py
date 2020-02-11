@@ -1,97 +1,63 @@
-import os, time, json
+from fastapi import FastAPI
 from dotenv import load_dotenv
-from quart import Quart, request, jsonify
 from telegram import sendcode, login, logout, sendmsg
 from msgemail import render_template, send_email
+from starlette.middleware.cors import CORSMiddleware
+import os, time, json
+import uvicorn
+#-----------------------------------------------------------------------------------------
+app = FastAPI()
 
 #-----------------------------------------------------------------------------------------
-app = Quart(__name__)
-app.secret_key = os.getenv("SECRET_KEY")
+origins = [
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["POST"],
+    allow_headers=["*"],
+)
 
 #-----------------------------------------------------------------------------------------
-
-@app.route('/sendrequest' , methods=['POST'])
-async def sendrequest():
-    request_data = await request.get_json()
-    new_request = {
-        'phone':request_data['phone'],
-    }
-    p = str(new_request['phone'])
-    await sendcode(p)
-    return jsonify ({'message': 'code have sent to your telegram success !'}), 200
+@app.post('/sendrequest')
+async def sendrequest(phone : str):
+    await sendcode(phone)
+    return {'message': 'code have sent to your telegram success !'}
 
 #-----------------------------------------------------------------------------------------
-
-@app.route('/telegramlogin' , methods=['POST'])
-async def telegramlogin():
-    request_data = await request.get_json()
-    new_request = {
-        'phone':request_data['phone'],
-        'code':request_data['code']
-    }
-    p = str(new_request['phone'])
-    c = int(new_request['code'])
-    await login(p, c)
-    return jsonify ({'message': 'login success !'}), 200
+@app.post('/telegramlogin')
+async def telegramlogin(phone: str, code: int):
+    await login(phone, code)
+    return {'message': 'login success !'}
 
 #-----------------------------------------------------------------------------------------
-
-@app.route('/telegramlogout' , methods=['POST'])
-async def telegramlogout():
-    request_data = await request.get_json()
-    new_request = {
-        'phone':request_data['phone'],
-    }
-    p = str(new_request['phone'])
-    await logout(p)
-    return jsonify ({'message': 'logout success !'}), 200
+@app.post('/telegramlogout')
+async def telegramlogout(phone: str):
+    await logout(phone)
+    return {'message': 'logout success !'}
 
 #-----------------------------------------------------------------------------------------
-
-@app.route('/telegrammsg' , methods=['POST'])
-async def telegrammsg():
-    request_data = await request.get_json()
-    new_request = {
-        'phone':request_data['phone'],
-        'channel':request_data['channel'],
-        'msg':request_data['msg'],
-    }
-    p = str(new_request['phone'])
-    c = str(new_request['channel'])
-    m = str(new_request['msg'])
-    await sendmsg(p,c,m)
-    return jsonify ({'message': 'sent message success !'}), 200
+@app.post('/telegrammsg')
+async def telegrammsg(phone: str, channel: str, msg: str):
+    await sendmsg(phone,channel,msg)
+    return {'message': 'sent message success !'}
 
 #-----------------------------------------------------------------------------------------
-
-@app.route("/emailmessage" , methods=["POST"])
-async def emailmessage():
-    request_data = await request.get_json(silent=True)
-    sender = request_data["sender"]
-    password =request_data["password"]
-    subject = request_data["subject"]
-    context = request_data["context"]
-
-    port = os.getenv("EMAIL_PORT")
-    if 'port' in request_data:
-        port = request_data['port']
-
-    htmlfile = 'base/default.j2'
-    if 'htmlfile' in request_data:
-        htmlfile = request_data['htmlfile']
-
-    host = os.getenv("EMAIL_HOST")
-    if 'host' in request_data:
-        host = request_data['host']
-
-    receiver = None
-    if 'receiver' in request_data:
-        receiver = request_data['receiver']
-
-    emailfile = 'email-list.json'
-    if 'emailfile' in request_data:
-        emailfile = request_data['emailfile']
-
+@app.post('/emailmessage')
+async def emailmessage(sender: str,
+                       password: str,
+                       subject: str,
+                       context: str,
+                       port: str = os.getenv("EMAIL_PORT"),
+                       host: str = os.getenv("EMAIL_HOST"),
+                       htmlfile: str = 'base/default.j2',
+                       receiver: str = None,
+                       emailfile: str = 'email-list.json',
+                       name : str = None,
+                       ):
     if receiver is None:
         ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         with open(ROOT_DIR + '/emailLst/'+emailfile, 'r') as file:
@@ -111,20 +77,17 @@ async def emailmessage():
                         port=port)
             time.sleep(5)
     else:
-        html = await render_template(htmlfile, context)
+        html = await render_template(htmlfile, context, name=name)
         await send_email(receiver=receiver,
-                        sender=sender,
-                        password=password,
-                        subject=subject,
-                        body=html,
-                        host=host,
-                        port=port)
-    return jsonify ({"message": "sent message success !"}), 200
-
+                    sender=sender,
+                    password=password,
+                    subject=subject,
+                    body=html,
+                    host=host,
+                    port=port)
+        time.sleep(5)
+    return {'message': 'sent message success !'}
 #-----------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    app.run(host=os.getenv("HOST"),
-            port=os.getenv("PORT"),
-            debug=os.getenv("DEBUG"))
-
+    uvicorn.run(app, host="127.0.0.1", port=8000)

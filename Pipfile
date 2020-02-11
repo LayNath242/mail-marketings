@@ -7,11 +7,12 @@ verify_ssl = true
 pylint = "*"
 
 [packages]
-Telethon = "*"
 python-dotenv = "*"
-Quart = "*"
-flask-mail = "*"
-contextvars = "*"
+fastapi = "*"
+uvicorn = "*"
+Telethon = "*"
+fastapi-mail = "*"
+Jinja2 = "*"
 
 [requires]
 python_version = "3.6"
