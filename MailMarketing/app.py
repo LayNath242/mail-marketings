@@ -41,8 +41,10 @@ async def telegramlogout(phone: str):
 
 #-----------------------------------------------------------------------------------------
 @app.post('/telegrammsg')
-async def telegrammsg(phone: str, channel: str, msg: str):
-    await sendmsg(phone,channel,msg)
+async def telegrammsg(phone: str, channel: str, msg: str, image: str = None):
+    if image is not None:
+        image = "image/"+image
+    await sendmsg(phone, channel, msg, image)
     return {'message': 'sent message success !'}
 
 #-----------------------------------------------------------------------------------------
@@ -51,8 +53,8 @@ async def emailmessage(sender: str,
                        password: str,
                        subject: str,
                        context: str,
-                       port: str = os.getenv("EMAIL_PORT"),
-                       host: str = os.getenv("EMAIL_HOST"),
+                       port: str = 587,
+                       host: str = "smtp.gmail.com",
                        htmlfile: str = 'base/default.j2',
                        receiver: str = None,
                        emailfile: str = 'email-list.json',
@@ -85,7 +87,6 @@ async def emailmessage(sender: str,
                     body=html,
                     host=host,
                     port=port)
-        time.sleep(5)
     return {'message': 'sent message success !'}
 #-----------------------------------------------------------------------------------------
 

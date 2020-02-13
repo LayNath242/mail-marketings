@@ -43,7 +43,7 @@ async def logout(phone_number):
     await client.log_out()
 
 #------------------------------------------------------------------------------------------------
-async def sendmsg(phone, channel, message):
+async def sendmsg(phone, channel, message, image):
     client = TelegramClient(phone, api_id, api_hash)
     await client.connect()
     if not await client.is_user_authorized():
@@ -57,5 +57,10 @@ async def sendmsg(phone, channel, message):
             if me.id==user.id:
                 pass
             else:
-                await client.send_message(user.id,  message=message)
-                time.sleep(5)
+                await client.send_message(
+                user.id,
+                message=message,
+                parse_mode='html',
+                file=image,
+                )
+                time.sleep(1)
