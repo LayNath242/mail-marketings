@@ -6,6 +6,7 @@ from msgemail import render_template, send_email
 from starlette.middleware.cors import CORSMiddleware
 import os, time, json
 import uvicorn
+# from typing import List
 #-----------------------------------------------------------------------------------------
 app = FastAPI()
 
@@ -59,7 +60,7 @@ async def telegramcsv(
     phone: str,
     channel: str,
     msg: str,
-    filename: str = 'test.csv',
+    filename: str,
     image: str = None,
         ):
     if image is not None:
@@ -111,11 +112,11 @@ async def emailmessage(sender: str,
                     password=password,
                     subject=subject,
                     body=html,
-                    host=host,
+                    host=host, 
                     port=port)
     return {'message': 'sent message success !'}
 
 #-----------------------------------------------------------------------------------------
-
+#-----------------------------------------------------------------------------------------
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
