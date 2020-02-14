@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from dotenv import load_dotenv
-from telegram import sendcode, login, logout, sendmsg
+from telegram import sendcode, login, logout, getTelegrammember
+from telegram import sendcsvmsg, sendmsg
 from msgemail import render_template, send_email
 from starlette.middleware.cors import CORSMiddleware
 import os, time, json
@@ -15,7 +16,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["POST"],
     allow_headers=["*"],
@@ -41,11 +42,36 @@ async def telegramlogout(phone: str):
 
 #-----------------------------------------------------------------------------------------
 @app.post('/telegrammsg')
-async def telegrammsg(phone: str, channel: str, msg: str, image: str = None):
+async def telegrammsg(
+    phone: str,
+    channel: str,
+    msg: str,
+    image: str = None,
+        ):
     if image is not None:
         image = "image/"+image
     await sendmsg(phone, channel, msg, image)
     return {'message': 'sent message success !'}
+
+#-----------------------------------------------------------------------------------------
+@app.post('/telegramcsv')
+async def telegramcsv(
+    phone: str,
+    channel: str,
+    msg: str,
+    filename: str = 'test.csv',
+    image: str = None,
+        ):
+    if image is not None:
+        image = "image/"+image
+    await sendcsvmsg(phone, channel, msg, image, filename)
+    return {'message': 'sent message success !'}
+
+#-----------------------------------------------------------------------------------------
+@app.post('/telegrammember')
+async def telegrammember(phone: str, channel: str, filename: str):
+    await getTelegrammember(phone, channel, filename)
+    return {'message': 'Scraping is success !'}
 
 #-----------------------------------------------------------------------------------------
 @app.post('/emailmessage')
@@ -88,6 +114,7 @@ async def emailmessage(sender: str,
                     host=host,
                     port=port)
     return {'message': 'sent message success !'}
+
 #-----------------------------------------------------------------------------------------
 
 if __name__ == "__main__":

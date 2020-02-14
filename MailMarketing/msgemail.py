@@ -1,5 +1,6 @@
 import ssl, jinja2
 from fastapi_mail import FastMail
+
 #------------------------------------------------------------------------------------------------
 ssl._create_default_https_context = ssl._create_unverified_context
 
