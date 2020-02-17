@@ -1,8 +1,11 @@
 from telethon import TelegramClient, sync
+from telethon.errors.rpcerrorlist import PeerFloodError, UserPrivacyRestrictedError
+
 import os
 from dotenv import load_dotenv
 import time
-from witecsv import write_csv, read_csv
+from util import write_csv, read_csv
+import traceback
 
 #------------------------------------------------------------------------------------------------
 load_dotenv()
@@ -53,44 +56,66 @@ async def sendmsg(phone, channel, message, image):
     if not await client.is_user_authorized():
         raise Exception("Please Register First")
     participants = await client.get_participants(channel)
-
     me = await client.get_me()
-    all = len(participants)
+    n=0
 
     for user in participants:
+        n+=1
+        if n % 50 == 0:
+            time.sleep(900)
         if me.id==user.id:
             pass
         else:
-            await client.send_message(
-            user.id,
-            message=message,
-            parse_mode='html',
-            file=image,
-            )
-            time.sleep(1)
+            try:
+                await client.send_message(
+                user.id,
+                message=message,
+                parse_mode='html',
+                file=image,
+                )
+            except PeerFloodError:
+                print("Getting Flood Error from telegram.\
+                        Script is stopping now. Please try again after some time.")
+            except UserPrivacyRestrictedError:
+                print("The user's privacy settings do not \
+                        allow you to do this. Skipping.")
+            except:
+                traceback.print_exc()
+                print("Unexpected Error")
+                continue
 
 #------------------------------------------------------------------------------------------------
-async def sendcsvmsg(phone, channel, message, image, filename):
+async def sendcsvmsg(phone, channel, message, filename):
     client = TelegramClient(phone, api_id, api_hash)
     await client.connect()
     if not await client.is_user_authorized():
         raise Exception("Please Register First")
     me = await client.get_me()
-
+    n=0
     user_id = await read_csv(filename)
     for id in user_id:
+        n+=1
+        if n % 50 == 0:
+            time.sleep(900)
         if me.id==id:
             pass
         else:
-            await client.send_message(
-            id,
-            message=message,
-            parse_mode='html',
-            file=image,
-            )
-            time.sleep(1)
-    os.remove(filename)
-    await client.disconnect()
+            try:
+                await client.send_message(
+                id,
+                message=message,
+                parse_mode='html',
+                )
+            except PeerFloodError:
+                print("Getting Flood Error from telegram.\
+                        Script is stopping now. Please try again after some time.")
+            except UserPrivacyRestrictedError:
+                print("The user's privacy settings do not \
+                        allow you to do this. Skipping.")
+            except:
+                traceback.print_exc()
+                print("Unexpected Error")
+                continue
 
 #------------------------------------------------------------------------------------------------
 async def getTelegrammember(phone, channel, filename):

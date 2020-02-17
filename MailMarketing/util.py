@@ -26,3 +26,8 @@ async def read_csv(filename):
     for d in csv.DictReader(open(filename)):
         user_id.append(int(d['user_id']))
     return user_id
+
+async def allowed_file(filename):
+    ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS

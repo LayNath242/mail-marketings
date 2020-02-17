@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 pylint = "*"
+pytest = "*"
 
 [packages]
 python-dotenv = "*"
@@ -14,6 +15,7 @@ Telethon = "*"
 fastapi-mail = "*"
 Jinja2 = "*"
 python-multipart = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.6"

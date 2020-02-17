@@ -2,11 +2,12 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 from telegram import sendcode, login, logout, getTelegrammember
 from telegram import sendcsvmsg, sendmsg
+from fastapi import File, UploadFile
 from msgemail import render_template, send_email
 from starlette.middleware.cors import CORSMiddleware
 import os, time, json
 import uvicorn
-# from typing import List
+from util import allowed_file
 #-----------------------------------------------------------------------------------------
 app = FastAPI()
 
@@ -61,11 +62,8 @@ async def telegramcsv(
     channel: str,
     msg: str,
     filename: str,
-    image: str = None,
         ):
-    if image is not None:
-        image = "image/"+image
-    await sendcsvmsg(phone, channel, msg, image, filename)
+    await sendcsvmsg(phone, channel, msg, filename)
     return {'message': 'sent message success !'}
 
 #-----------------------------------------------------------------------------------------
@@ -73,6 +71,22 @@ async def telegramcsv(
 async def telegrammember(phone: str, channel: str, filename: str):
     await getTelegrammember(phone, channel, filename)
     return {'message': 'Scraping is success !'}
+
+#-----------------------------------------------------------------------------------------
+@app.post("/telegramImage/")
+async def create_file(
+    phone: str,
+    channel: str,
+    msg: str = None,
+    file: UploadFile = File(...)
+        ):
+    fname = file.filename
+    if await allowed_file(fname):
+        image = file.file.read()
+        await sendmsg(phone, channel, msg, image)
+        return {'message': 'sent success !'}
+    else:
+        return {'message': 'unsupported file type!'}
 
 #-----------------------------------------------------------------------------------------
 @app.post('/emailmessage')
@@ -112,11 +126,10 @@ async def emailmessage(sender: str,
                     password=password,
                     subject=subject,
                     body=html,
-                    host=host, 
+                    host=host,
                     port=port)
     return {'message': 'sent message success !'}
 
-#-----------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
