@@ -58,13 +58,26 @@ async def sendmsg(phone, channel, message, image):
     participants = await client.get_participants(channel)
     me = await client.get_me()
     n=0
-
+    i=1
+    all = len(participants)
+    data = []
     for user in participants:
-        n+=1
-        if n % 50 == 0:
-            time.sleep(900)
+        data.append(user)
         if me.id==user.id:
             pass
+        n+=1
+        if n % 3 == 0 or all-n==0:
+            filename = 'Reported ' + str(i)+'.csv'
+            i+=1
+            await write_csv(data, filename)
+            data=[]
+            await client.send_file(
+                me,
+                filename,
+                force_document=True,
+                    )
+            os.remove(filename)
+            time.sleep(3550*4)
         else:
             try:
                 await client.send_message(
@@ -73,6 +86,7 @@ async def sendmsg(phone, channel, message, image):
                 parse_mode='html',
                 file=image,
                 )
+                time.sleep(1)
             except PeerFloodError:
                 print("Getting Flood Error from telegram.\
                         Script is stopping now. Please try again after some time.")

@@ -4,8 +4,10 @@ import csv
 async def write_csv(all_participants, filename):
     with open(filename,"w",encoding='UTF-8') as f:
         writer = csv.writer(f,delimiter=",",lineterminator="\n")
-        writer.writerow(['username','user_id', 'name'])
+        writer.writerow(['No','username','user_id', 'name'])
+        n = 0
         for user in all_participants:
+            n +=1
             if user.username:
                 username= user.username
             else:
@@ -19,7 +21,8 @@ async def write_csv(all_participants, filename):
             else:
                 last_name= ""
             name= (first_name + ' ' + last_name).strip()
-            writer.writerow([username ,user.id ,name])
+            writer.writerow([n,username ,user.id ,name])
+
 
 async def read_csv(filename):
     user_id = []
