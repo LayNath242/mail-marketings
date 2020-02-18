@@ -120,12 +120,11 @@ async def emailmessage(sender: str,
                         port=port)
             time.sleep(5)
     else:
-        html = await render_template(htmlfile, context, name=name)
         await send_email(receiver=receiver,
                     sender=sender,
                     password=password,
                     subject=subject,
-                    body=html,
+                    body=context,
                     host=host,
                     port=port)
     return {'message': 'sent message success !'}

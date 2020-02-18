@@ -62,41 +62,46 @@ async def sendmsg(phone, channel, message, image):
     all = len(participants)
     data = []
     for user in participants:
-        data.append(user)
         if me.id==user.id:
             pass
-        n+=1
-        if n % 3 == 0 or all-n==0:
-            filename = 'Reported ' + str(i)+'.csv'
-            i+=1
-            await write_csv(data, filename)
-            data=[]
-            await client.send_file(
-                me,
-                filename,
-                force_document=True,
-                    )
-            os.remove(filename)
-            time.sleep(3550*4)
         else:
-            try:
-                await client.send_message(
-                user.id,
-                message=message,
-                parse_mode='html',
-                file=image,
-                )
-                time.sleep(1)
-            except PeerFloodError:
-                print("Getting Flood Error from telegram.\
-                        Script is stopping now. Please try again after some time.")
-            except UserPrivacyRestrictedError:
-                print("The user's privacy settings do not \
-                        allow you to do this. Skipping.")
-            except:
-                traceback.print_exc()
-                print("Unexpected Error")
-                continue
+            data.append(user)
+            n+=1
+            if n % 50 == 0:
+                filename = 'Reported ' + str(i)+'.csv'
+                i+=1
+                await write_csv(data, filename)
+                data=[]
+                await client.send_file(me,filename,force_document=True)
+                os.remove(filename)
+                time.sleep(3100*4)
+            elif all-n==0:
+                filename = 'Reported ' + str(i)+'.csv'
+                await write_csv(data, filename)
+                data=[]
+                await client.send_file(me,filename,force_document=True)
+                os.remove(filename)
+                print('wait')
+                time.sleep(120)
+            else:
+                try:
+                    await client.send_message(
+                    user.id,
+                    message=message,
+                    parse_mode='html',
+                    file=image,
+                    )
+                    time.sleep(10)
+                except PeerFloodError:
+                    print("Getting Flood Error from telegram.\
+                            Script is stopping now. Please try again after some time.")
+                except UserPrivacyRestrictedError:
+                    print("The user's privacy settings do not \
+                            allow you to do this. Skipping.")
+                except:
+                    traceback.print_exc()
+                    print("Unexpected Error")
+                    continue
 
 #------------------------------------------------------------------------------------------------
 async def sendcsvmsg(phone, channel, message, filename):
