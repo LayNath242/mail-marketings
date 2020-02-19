@@ -1,17 +1,20 @@
+import os
+import time
+import json
+import uvicorn
 from fastapi import FastAPI
-from dotenv import load_dotenv
+from fastapi import File, UploadFile
+from starlette.middleware.cors import CORSMiddleware
+
 from telegram import sendcode, login, logout, getTelegrammember
 from telegram import sendcsvmsg, sendmsg
-from fastapi import File, UploadFile
-from msgemail import render_template, send_email
-from starlette.middleware.cors import CORSMiddleware
-import os, time, json
-import uvicorn
-from util import allowed_file
-#-----------------------------------------------------------------------------------------
-app = FastAPI()
 
-#-----------------------------------------------------------------------------------------
+
+from msgemail import render_template, send_email
+from util import allowed_file
+# -----------------------------------------------------------------------------------------
+app = FastAPI()
+# -----------------------------------------------------------------------------------------
 origins = [
     "http://localhost:8080",
 ]
@@ -23,26 +26,30 @@ app.add_middleware(
     allow_methods=["POST"],
     allow_headers=["*"],
 )
+# -----------------------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------------------
+
 @app.post('/sendrequest')
-async def sendrequest(phone : str):
+async def sendrequest(phone: str):
     await sendcode(phone)
     return {'message': 'code have sent to your telegram success !'}
+# -----------------------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------------------
+
 @app.post('/telegramlogin')
 async def telegramlogin(phone: str, code: int):
     await login(phone, code)
     return {'message': 'login success !'}
+# -----------------------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------------------
+
 @app.post('/telegramlogout')
 async def telegramlogout(phone: str):
     await logout(phone)
     return {'message': 'logout success !'}
+# -----------------------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------------------
+
 @app.post('/telegrammsg')
 async def telegrammsg(
     phone: str,
@@ -54,8 +61,9 @@ async def telegrammsg(
         image = "image/"+image
     await sendmsg(phone, channel, msg, image)
     return {'message': 'sent message success !'}
+# -----------------------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------------------
+
 @app.post('/telegramcsv')
 async def telegramcsv(
     phone: str,
@@ -65,14 +73,16 @@ async def telegramcsv(
         ):
     await sendcsvmsg(phone, channel, msg, filename)
     return {'message': 'sent message success !'}
+# -----------------------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------------------
+
 @app.post('/telegrammember')
 async def telegrammember(phone: str, channel: str, filename: str):
     await getTelegrammember(phone, channel, filename)
     return {'message': 'Scraping is success !'}
+# -----------------------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------------------
+
 @app.post("/telegramImage/")
 async def create_file(
     phone: str,
@@ -87,8 +97,9 @@ async def create_file(
         return {'message': 'sent success !'}
     else:
         return {'message': 'unsupported file type!'}
+# -----------------------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------------------
+
 @app.post('/emailmessage')
 async def emailmessage(sender: str,
                        password: str,
@@ -99,36 +110,41 @@ async def emailmessage(sender: str,
                        htmlfile: str = 'base/default.j2',
                        receiver: str = None,
                        emailfile: str = 'email-list.json',
-                       name : str = None,
+                       name: str = None,
                        ):
     if receiver is None:
         ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         with open(ROOT_DIR + '/emailLst/'+emailfile, 'r') as file:
-            data=file.read()
+            data = file.read()
         obj = json.loads(data)
 
         for key in obj:
-            name = key['firstname'] +' '+ key['lastname']
+            name = key['firstname'] + ' ' + key['lastname']
             email = key['email']
             html = await render_template(htmlfile, context, name)
-            await send_email(receiver=email,
-                        sender=sender,
-                        password=password,
-                        subject=subject,
-                        body=html,
-                        host=host,
-                        port=port)
+            await send_email(
+                receiver=email,
+                sender=sender,
+                password=password,
+                subject=subject,
+                body=html,
+                host=host,
+                port=port
+                        )
             time.sleep(5)
     else:
-        await send_email(receiver=receiver,
-                    sender=sender,
-                    password=password,
-                    subject=subject,
-                    body=context,
-                    host=host,
-                    port=port)
+        await send_email(
+            receiver=receiver,
+            sender=sender,
+            password=password,
+            subject=subject,
+            body=context,
+            host=host,
+            port=port
+                    )
     return {'message': 'sent message success !'}
+# -----------------------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------------------
+
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8001)
