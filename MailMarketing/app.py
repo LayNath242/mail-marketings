@@ -11,7 +11,7 @@ from telegram import sendcsvmsg, sendmsg
 
 
 from msgemail import render_template, send_email
-from util import allowed_file
+from util import allowed_image, allowed_csv, save_file
 # -----------------------------------------------------------------------------------------
 app = FastAPI()
 # -----------------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ async def create_file(
     file: UploadFile = File(...)
         ):
     fname = file.filename
-    if await allowed_file(fname):
+    if await allowed_image(fname):
         image = file.file.read()
         await sendmsg(phone, channel, msg, image)
         return {'message': 'sent success !'}
@@ -100,24 +100,23 @@ async def create_file(
 # -----------------------------------------------------------------------------------------
 
 
-@app.post('/emailmessage')
-async def emailmessage(sender: str,
-                       password: str,
-                       subject: str,
-                       context: str,
-                       port: str = 587,
-                       host: str = "smtp.gmail.com",
-                       htmlfile: str = 'base/default.j2',
-                       receiver: str = None,
-                       emailfile: str = 'email-list.json',
-                       name: str = None,
-                       ):
-    if receiver is None:
-        ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-        with open(ROOT_DIR + '/emailLst/'+emailfile, 'r') as file:
+@app.post("/emailmessage")
+async def emailmessage(
+    sender: str,
+    password: str,
+    subject: str,
+    context: str,
+    port: str = 587,
+    host: str = "smtp.gmail.com",
+    htmlfile: str = 'base/default.j2',
+    file: UploadFile = File(...)
+        ):
+    if await allowed_csv(file):
+        await save_file(file)
+        filename = file.filename
+        with open(filename, 'r') as file:
             data = file.read()
         obj = json.loads(data)
-
         for key in obj:
             name = key['firstname'] + ' ' + key['lastname']
             email = key['email']
@@ -132,17 +131,8 @@ async def emailmessage(sender: str,
                 port=port
                         )
             time.sleep(5)
-    else:
-        await send_email(
-            receiver=receiver,
-            sender=sender,
-            password=password,
-            subject=subject,
-            body=context,
-            host=host,
-            port=port
-                    )
-    return {'message': 'sent message success !'}
+        os.remove(filename)
+        return {'message': 'sent message success !'}
 # -----------------------------------------------------------------------------------------
 
 

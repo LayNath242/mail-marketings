@@ -1,5 +1,6 @@
 # https://python.gotrained.com/scraping-telegram-group-members-python-telethon/
 import csv
+import pandas as pd
 
 
 async def write_csv(all_participants, filename):
@@ -32,7 +33,19 @@ async def read_csv(filename):
     return user_id
 
 
-async def allowed_file(filename):
+async def allowed_image(filename):
     ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+async def allowed_csv(file):
+    filename = file.filename
+    ALLOWED_EXTENSIONS = {'csv'}
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+async def save_file(file):
+    df = pd.read_csv(file.file)
+    df.to_json(file.filename, orient='records')

@@ -17,6 +17,7 @@ fastapi-mail = "*"
 Jinja2 = "*"
 python-multipart = "*"
 pillow = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.6"
