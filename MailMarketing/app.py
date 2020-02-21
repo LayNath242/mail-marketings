@@ -76,7 +76,7 @@ async def telegramcsv(
 # -----------------------------------------------------------------------------------------
 
 
-@app.post('/telegrammember')
+@app.post('/telegramscraping')
 async def telegrammember(phone: str, channel: str, filename: str):
     await getTelegrammember(phone, channel, filename)
     return {'message': 'Scraping is success !'}
