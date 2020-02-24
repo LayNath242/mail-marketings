@@ -50,17 +50,17 @@ async def telegramlogout(phone: str):
 # -----------------------------------------------------------------------------------------
 
 
-@app.post('/telegrammsg')
-async def telegrammsg(
-    phone: str,
-    channel: str,
-    msg: str,
-    image: str = None,
-        ):
-    if image is not None:
-        image = "image/"+image
-    await sendmsg(phone, channel, msg, image)
-    return {'message': 'sent message success !'}
+# @app.post('/telegrammsg')
+# async def telegrammsg(
+#     phone: str,
+#     channel: str,
+#     msg: str,
+#     image: str = None,
+#         ):
+#     if image is not None:
+#         image = "image/"+image
+#     await sendmsg(phone, channel, msg, image)
+#     return {'message': 'sent message success !'}
 # -----------------------------------------------------------------------------------------
 
 
@@ -83,20 +83,24 @@ async def telegrammember(phone: str, channel: str, filename: str):
 # -----------------------------------------------------------------------------------------
 
 
-@app.post("/telegramImage/")
-async def create_file(
+@app.post("/telegrammsg/")
+async def telegrammsg(
     phone: str,
     channel: str,
     msg: str = None,
-    file: UploadFile = File(...)
+    file: UploadFile = File(default="None")
         ):
-    fname = file.filename
-    if await allowed_image(fname):
-        image = file.file.read()
+    if file == "None":
+        image = None
         await sendmsg(phone, channel, msg, image)
-        return {'message': 'sent success !'}
     else:
-        return {'message': 'unsupported file type!'}
+        fname = file.filename
+        if await allowed_image(fname):
+            image = file.file.read()
+            await sendmsg(phone, channel, msg, image)
+            return {'message': 'sent success !'}
+        else:
+            return {'message': 'unsupported file type!'}
 # -----------------------------------------------------------------------------------------
 
 
