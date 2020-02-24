@@ -72,7 +72,7 @@ async def sendmsg(phone, channel, message, image):
             await client.send_file(me, filename, force_document=True)
             os.remove(filename)
             time.sleep(3100*4)
-        elif all - n == 0:
+        elif all - n == -1:
             filename = now.strftime("%d_%m_%Y_%H:%M:%S") + '.csv'
             await write_csv(data, filename)
             print(data)
