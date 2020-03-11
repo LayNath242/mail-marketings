@@ -23,19 +23,20 @@ async def send_email(
     body,
     host,
     port,
-        ):
+):
     mail = FastMail(
         email=sender,
         password=password,
         tls=True,
         port=port,
         host=host,
-        service="gmail"
-        )
+        service="gmail",
+        bulk=True
+    )
 
     await mail.send_message(
         recipient=receiver,
         subject=subject,
         body=body,
         text_format="html"
-        )
+    )

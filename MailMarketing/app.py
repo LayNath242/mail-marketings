@@ -70,7 +70,7 @@ async def telegramcsv(
     channel: str,
     msg: str,
     filename: str,
-        ):
+):
     await sendcsvmsg(phone, channel, msg, filename)
     return {'message': 'sent message success !'}
 # -----------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ async def telegrammsg(
     channel: str,
     msg: str = None,
     file: UploadFile = File(default="None")
-        ):
+):
     if file == "None":
         image = None
         await sendmsg(phone, channel, msg, image)
@@ -114,7 +114,7 @@ async def emailmessage(
     host: str = "smtp.gmail.com",
     htmlfile: str = 'base/default.j2',
     file: UploadFile = File(...)
-        ):
+):
     if await allowed_csv(file):
         await save_file(file)
         filename = file.filename
@@ -133,7 +133,7 @@ async def emailmessage(
                 body=html,
                 host=host,
                 port=port
-                        )
+            )
             time.sleep(5)
         os.remove(filename)
         return {'message': 'sent message success !'}
